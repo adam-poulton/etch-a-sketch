@@ -11,8 +11,8 @@ body{
 #container {
   display: flex;
   justify-content: center;
-  border: 2px solid purple;
   box-sizing: border-box;
+  border: 1px solid #dddddd;
 }
 
 #grid {
@@ -29,4 +29,5 @@ body{
   min-width: calc(100%/(var(--grid-cols)));
   border: 1px solid #dddddd;
   text-align: center;
+  cursor: crosshair;
 }
