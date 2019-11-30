@@ -31,3 +31,14 @@ body{
   text-align: center;
   cursor: crosshair;
 }
+
+.controls {
+  display: flex;
+  align-items: right;
+  justify-content: flex-end;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70px;
+  height: 100px;
+}

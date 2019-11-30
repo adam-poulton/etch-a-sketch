@@ -1,6 +1,19 @@
 const init = () => {
   const container = document.getElementById('container');
   const grid = document.getElementById('grid');
+  
+  let brushColor = '#ff0000';
+
+
+
+
+  const setColor = (color) => {
+    brushColor = color;
+    //document.getElementById('color').value = color;
+    console.log(color);
+  }
+
+  const getColor = () => brushColor;
 
   const setContainerArea = (e) => {
     const height = window.innerHeight;
@@ -31,16 +44,27 @@ const init = () => {
   }
 
   const setCellColor = (e) => {
-    if (e.buttons == 1) {
-      e.target.style.backgroundColor="red";
+    if (e.shiftKey && e.target.style.backgroundColor != "") {
+      // pipette the selected cell to the color picker
+      setColor(e.target.style.backgroundColor)
+    } else if (e.buttons == 1) {
+      // paint the cell
+      e.target.style.backgroundColor = getColor();
     } else if (e.buttons == 2) {
-      e.target.style.backgroundColor="";
+      // erase the cell
+      e.target.style.backgroundColor = "";
     }
     e.preventDefault();
     return false;
   }
 
+  const updateColor = (e) => {
+    setColor(e.target.value);
+    console.log(e.target.value);
+    e.target.blur();
+  }
 
+  document.getElementById('color').addEventListener('change', updateColor)
   createDivGrid(64, 64);
   window.onload = setContainerArea;
   window.onresize = setContainerArea;
