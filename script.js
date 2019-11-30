@@ -50,9 +50,12 @@ const init = () => {
   }
 
   const setCellColor = (e) => {
-    if (e.shiftKey && e.type == "mousedown" && e.target.style.backgroundColor != "") {
+    if (e.shiftKey) {
       // pipette the selected cell to the color picker
-      setColor(rgbToHex(e.target.style.backgroundColor));
+      const pipetteColor = e.target.style.backgroundColor
+      if (pipetteColor != "" && e.type == "mousedown") {
+        setColor(rgbToHex(pipetteColor));
+      }
     } else if (e.buttons == 1) {
       // paint the cell
       e.target.style.backgroundColor = getColor();
