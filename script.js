@@ -4,13 +4,20 @@ const init = () => {
   
   let brushColor = '#ff0000';
 
-
+  const rgbToHex = (string) => {
+    let hex = "#"
+    string.slice(4, -1).split(', ').forEach(element => {
+      let item = Number(element).toString(16);
+      item = item.length < 2 ? "0" + item : item;
+      hex += item;
+    }); 
+    return hex;
+  }
 
 
   const setColor = (color) => {
     brushColor = color;
-    //document.getElementById('color').value = color;
-    console.log(color);
+    document.getElementById('color').value = brushColor;
   }
 
   const getColor = () => brushColor;
@@ -27,7 +34,6 @@ const init = () => {
     }
     container.style.setProperty('height', `${dimension}px`);
     container.style.setProperty('width', `${dimension}px`);
-    console.log(`w: ${width} h: ${height} d: ${dimension}`) 
   }
 
   const createDivGrid = (rows, cols) => {
@@ -44,9 +50,9 @@ const init = () => {
   }
 
   const setCellColor = (e) => {
-    if (e.shiftKey && e.target.style.backgroundColor != "") {
+    if (e.shiftKey && e.type == "mousedown" && e.target.style.backgroundColor != "") {
       // pipette the selected cell to the color picker
-      setColor(e.target.style.backgroundColor)
+      setColor(rgbToHex(e.target.style.backgroundColor));
     } else if (e.buttons == 1) {
       // paint the cell
       e.target.style.backgroundColor = getColor();
@@ -60,7 +66,6 @@ const init = () => {
 
   const updateColor = (e) => {
     setColor(e.target.value);
-    console.log(e.target.value);
     e.target.blur();
   }
 
