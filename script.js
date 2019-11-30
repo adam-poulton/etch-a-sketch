@@ -135,9 +135,20 @@ const init = () => {
     cells.forEach(cell=>cell.style.backgroundColor = "")
   }
 
+  const newGrid = (e) => {
+    let newSize = parseInt(prompt('Enter grid size: ', '64'));
+    if (newSize === NaN) return
+    const parent = grid;
+    while(parent.firstChild) {
+      parent.firstChild.remove()
+    }
+    createDivGrid(Math.min(256, Math.max(0, newSize)), Math.min(256, Math.max(0, newSize)));
+  }
+
   document.getElementById('color').addEventListener('change', updateColor)
   document.getElementById('borders').addEventListener('click', toggleBorders)
   document.getElementById('reset').addEventListener('click', resetPage)
+  document.getElementById('resize').addEventListener('click', newGrid)
   createDivGrid(64, 64);
   window.onload = setContainerArea;
   window.onresize = setContainerArea;
