@@ -6,9 +6,16 @@ class cellColor {
     this.blue = Math.round(Math.max(0, Math.min(data.blue, 255)));
     this.opacity = Math.max(0, Math.min(data.opacity, 1));
   }
+
+  setOpacity(value){
+    const newOpacity = parseFloat(value);
+    if (newOpacity != NaN) {
+      this.opacity = Math.max(0, Math.min(newOpacity, 1))
+    }
+  }
   
   combine(added){
-    const newOpacity = 1 - (1 - added.opacity) * (1 - this.opacity);
+    const newOpacity = 1 - ((1 - added.opacity) * (1 - this.opacity));
     const newRed = Math.round((added.red * added.opacity / newOpacity) + (this.red * this.opacity * (1 - added.opacity) / newOpacity));
     const newGreen = Math.round((added.green * added.opacity / newOpacity) + (this.green * this.opacity * (1 - added.opacity) / newOpacity));
     const newBlue = Math.round((added.blue * added.opacity / newOpacity) + (this.blue * this.opacity * (1 - added.opacity) / newOpacity));
@@ -55,18 +62,6 @@ const init = () => {
   const grid = document.getElementById('grid');
   
   let brushColor = new cellColor();
-  let borders = true;
-
-  const rgbToHex = (string) => {
-    let hex = "#"
-    string.slice(4, -1).split(', ').forEach(element => {
-      let item = Number(element).toString(16);
-      item = item.length < 2 ? "0" + item : item;
-      hex += item;
-    }); 
-    return hex;
-  }
-
 
   const setColor = (color) => {
     brushColor = new cellColor(color);
@@ -74,6 +69,7 @@ const init = () => {
   }
 
   const getColorRGBA = () => brushColor.toRGBA();
+
 
   const setContainerArea = (e) => {
     const height = window.innerHeight;
@@ -108,10 +104,18 @@ const init = () => {
       const pipetteColor = e.target.style.backgroundColor
       if (pipetteColor != "" && e.type == "mousedown") {
         setColor(fromRGBA(pipetteColor));
+        updateOpacityUi(brushColor.opacity)
       }
     } else if (e.buttons == 1) {
       // paint the cell
-      e.target.style.backgroundColor = getColorRGBA();
+      // mix the brush color with the base color
+      const baseColor = e.target.style.backgroundColor;
+      if (baseColor == "") {
+        e.target.style.backgroundColor = getColorRGBA();
+      } else {
+        const newColor = new cellColor(fromRGBA(baseColor)).combine(brushColor);
+        e.target.style.backgroundColor = newColor.toRGBA();
+      }
     } else if (e.buttons == 2) {
       // erase the cell
       e.target.style.backgroundColor = "";
@@ -123,6 +127,26 @@ const init = () => {
   const updateColor = (e) => {
     setColor(fromHex(e.target.value));
     e.target.blur();
+    brushColor.setOpacity(document.getElementById('opacityText').value)
+  }
+
+  const updateOpacity = (e) => {
+    brushColor.setOpacity(parseFloat(e.target.value) / 100)
+    e.target.blur()
+    updateOpacityUi(brushColor.opacity)
+
+  }
+
+  const updateOpacityText = (e) => {
+    brushColor.setOpacity(parseFloat(e.target.value))
+    e.target.blur()
+    updateOpacityUi(brushColor.opacity)
+
+  }
+
+  const updateOpacityUi = (value) => {
+    document.getElementById('opacity').value = parseFloat(value) * 100;
+    document.getElementById('opacityText').value = parseFloat(value);
   }
 
   const toggleBorders = (e) => {
@@ -149,7 +173,10 @@ const init = () => {
   document.getElementById('borders').addEventListener('click', toggleBorders)
   document.getElementById('reset').addEventListener('click', resetPage)
   document.getElementById('resize').addEventListener('click', newGrid)
-  createDivGrid(64, 64);
+  document.getElementById('opacity').addEventListener('change', updateOpacity)
+  document.getElementById('opacity').addEventListener('mousemove', updateOpacity)
+  document.getElementById('opacityText').addEventListener('change', updateOpacityText)
+  createDivGrid(16, 16);
   window.onload = setContainerArea;
   window.onresize = setContainerArea;
 }
