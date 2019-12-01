@@ -9,13 +9,13 @@ class cellColor {
 
   setOpacity(value){
     const newOpacity = parseFloat(value);
-    if (newOpacity != NaN) {
+    if (!isNaN(newOpacity)) {
       this.opacity = Math.max(0, Math.min(newOpacity, 1))
     }
   }
   
   combine(added){
-    const newOpacity = 1 - ((1 - added.opacity) * (1 - this.opacity));
+    const newOpacity = 1 - (1 - added.opacity) * (1 - this.opacity);
     const newRed = Math.round((added.red * added.opacity / newOpacity) + (this.red * this.opacity * (1 - added.opacity) / newOpacity));
     const newGreen = Math.round((added.green * added.opacity / newOpacity) + (this.green * this.opacity * (1 - added.opacity) / newOpacity));
     const newBlue = Math.round((added.blue * added.opacity / newOpacity) + (this.blue * this.opacity * (1 - added.opacity) / newOpacity));
@@ -161,7 +161,8 @@ const init = () => {
 
   const newGrid = (e) => {
     let newSize = parseInt(prompt('Enter grid size: ', '64'));
-    if (newSize === NaN) return
+    if (isNaN(newSize) || newSize === null) return
+    console.log(newSize);
     const parent = grid;
     while(parent.firstChild) {
       parent.firstChild.remove()
